@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PIMS Antilles</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>PIMS Antilles</h1>
+        <p>Plan Individuel de Mise en Sûreté</p>
+    </header>
+
+    <nav>
+        <button onclick="showSection('prevention')">Prévention</button>
+        <button onclick="showSection('preparation')">Préparation</button>
+        <button onclick="showSection('regroupement')">Urgence</button>
+        <button onclick="showSection('infos')">Infos</button>
+    </nav>
+
+    <main id="content">
+        <section id="prevention" class="active">
+            <h2>Risques Naturels & Technologiques Majeurs</h2>
+            
+            <details>
+                <summary>🌀 Ouragans (Phases d'alerte)</summary>
+                <ul>
+                    <li><strong>Jaune :</strong> Soyez attentif, vérifiez vos kits.</li>
+                    <li><strong>Orange :</strong> Préparez l'habitation, rentrez les objets.</li>
+                    <li><strong>Rouge :</strong> Gagnez votre abri, ne circulez plus.</li>
+                    <li><strong>Violet :</strong> Confinement total immédiat (Impact imminent).</li>
+                    <li><strong>Gris :</strong> Phase de sauvegarde, attention aux débris et crues.</li>
+                </ul>
+            </details>
+
+            <details>
+                <summary>🌦️ Tempête (Vigilance Météo)</summary>
+                <ul>
+                    <li><strong>Jaune :</strong> Phénomène habituel mais potentiellement dangereux localement.</li>
+                    <li><strong>Orange :</strong> Phénomène dangereux, soyez très vigilants.</li>
+                    <li><strong>Rouge :</strong> Phénomène dangereux d'intensité exceptionnelle. Suivez les ordres officiels.</li>
+                </ul>
+            </details>
+
+            <details>
+                <summary>🌊 Inondation</summary>
+                <p>En cas de montée des eaux :</p>
+                <ul>
+                    <li>Coupez l'électricité et le gaz.</li>
+                    <li>Montez aux étages si possible.</li>
+                    <li>Ne vous engagez jamais sur une route inondée (à pied ou en voiture).</li>
+                </ul>
+            </details>
+
+            <details>
+                <summary>⛰️ Séismes</summary>
+                <p><strong>Pendant :</strong> Au RDC, évacuez les bâtiments. Aux étages, abritez-vous sous une table solide. Éloignez-vous des vitres.</p>
+                <p><strong>Après :</strong> Évacuez les bâtiments, attention aux répliques.</p>
+            </details>
+
+            <details>
+                <summary>🏖️ Tsunami</summary>
+                <p><strong>Signe :</strong> La mer se retire anormalement.</p>
+                <p><strong>Action :</strong> Fuyez immédiatement vers les hauteurs (zone refuge) sans attendre d'alerte officielle.</p>
+            </details>
+
+            <details>
+                <summary>🏭 Risques Industriels & TMD</summary>
+                <p>Accidents technologiques ou Transport de Matières Dangereuses :</p>
+                <ul>
+                    <li><strong>Confinement :</strong> Rentrez dans le bâtiment le plus proche.</li>
+                    <li><strong>Calfeutrez :</strong> Fermez fenêtres, portes et ventilations.</li>
+                    <li><strong>Écoutez :</strong> Allumez la radio pour les instructions de la Préfecture.</li>
+                </ul>
+            </details>
+        </section>
+
+        <section id="preparation">
+            <h2>Mon Kit de Survie (72h)</h2>
+            <div class="checklist">
+                <label><input type="checkbox"> 6L d'eau par personne</label>
+                <label><input type="checkbox"> Rations de survie / Conserves</label>
+                <label><input type="checkbox"> Radio à piles + Talkie-Walkie</label>
+                <label><input type="checkbox"> Lampe torche & Piles</label>
+                <label><input type="checkbox"> Trousse de secours & Médicaments</label>
+                <label><input type="checkbox"> Nécessaire de toilette (lingettes, savon)</label>
+                <label><input type="checkbox"> Petit outillage (couteau suisse, ruban adhésif)</label>
+            </div>
+            
+            <hr>
+            <h2>Premiers Secours</h2>
+            <div class="aid-box">
+                <p><strong>Inconscience :</strong> Placer en Position Latérale de Sécurité (PLS).</p>
+                <p><strong>Hémorragie :</strong> Comprimer la plaie avec un linge propre.</p>
+                <p><strong>Étouffement :</strong> 5 claques vigoureuses dans le dos entre les omoplates.</p>
+                <p><strong>Brûlure :</strong> Arroser à l'eau tempérée pendant 10 minutes.</p>
+            </div>
+        </section>
+
+        <section id="regroupement">
+            <h2>Numéros d'Urgence</h2>
+            <div class="emergency-numbers">
+                <p>🚑 <strong>15 :</strong> SAMU</p>
+                <p>👮 <strong>17 :</strong> Gendarmerie / Police</p>
+                <p>🚒 <strong>18 :</strong> Pompiers</p>
+                <p>🇪🇺 <strong>112 :</strong> Appel d'urgence européen</p>
+            </div>
+
+            <hr>
+            <h2>Annuaire de Crise (Privé)</h2>
+            <div id="contactList"></div>
+            <input type="text" id="contactName" placeholder="Prénom/Nom">
+            <input type="tel" id="contactPhone" placeholder="Numéro">
+            <button class="btn-add" onclick="addContact()">Ajouter à la famille</button>
+            
+            <hr>
+            <h2>Position GNSS</h2>
+            <input type="text" id="zoneRegroup" placeholder="Lieu de rdv (ex: Stade de Sandy Ground)">
+            <button class="btn-sos" onclick="sendSOS()">SIGNALER MA POSITION (SMS)</button>
+        </section>
+
+        <section id="infos">
+            <h2>Météo Officielle</h2>
+            <a href="http://www.meteofrance.gp" target="_blank" class="link-box">Météo France Guadeloupe, St-Barthélemy & St-Martin</a>
+            <a href="http://www.meteofrance.mq" target="_blank" class="link-box">Météo France Martinique</a>
+
+            <h2>Préfectures</h2>
+            <a href="https://www.guadeloupe.gouv.fr" target="_blank" class="link-box">Guadeloupe</a>
+            <a href="https://www.martinique.gouv.fr" target="_blank" class="link-box">Martinique</a>
+            <a href="https://www.saint-barth-saint-martin.gouv.fr" target="_blank" class="link-box">St-Barthélemy & St-Martin</a>
+
+            <h2>Évacuation & Cartographie</h2>
+            <a href="https://exploit.univ-montp3.fr/m/#" target="_blank" class="link-box" style="border-left-color: #e74c3c; font-weight: bold;">🗺️ Itinéraires d'évacuation Tsunami (EXPLOIT)</a>
+
+            <h2>Fréquences Radio de Crise</h2>
+            
+            <details>
+                <summary>📻 Guadeloupe La 1ère</summary>
+                <div class="media-grid">
+                    <p><strong>Basse-Terre :</strong> 88.0 / 89.0 / 97.5 MHz</p>
+                    <p><strong>Pointe-à-Pitre :</strong> 88.0 / 91.1 MHz</p>
+                    <p><strong>Marie-Galante :</strong> 89.4 / 93.1 MHz</p>
+                    <p><strong>Deshaies :</strong> 103.5 MHz</p>
+                    <p><strong>Vieux-Habitants :</strong> 93.3 MHz</p>
+                    <p><strong>La Désirade :</strong> 104.5 MHz</p>
+                </div>
+            </details>
+
+            <details>
+                <summary>📻 RCI Guadeloupe</summary>
+                <div class="media-grid">
+                    <p><strong>Basse-Terre Sud :</strong> 98.6 MHz</p>
+                    <p><strong>Basse-Terre Nord :</strong> 106.0 MHz</p>
+                    <p><strong>Grande-Terre :</strong> 102.6 MHz</p>
+                    <p><strong>Pointe-à-Pitre :</strong> 98.8 MHz</p>
+                    <p><strong>Marie-Galante :</strong> 91.3 MHz</p>
+                    <p><strong>Vieux-Fort :</strong> 100.2 MHz</p>
+                </div>
+            </details>
+
+            <details>
+                <summary>📻 Martinique La 1ère</summary>
+                <div class="media-grid">
+                    <p><strong>Fort-de-France :</strong> 92.0 / 94.5 MHz</p>
+                    <p><strong>Le Marin :</strong> 93.2 / 94.1 MHz</p>
+                    <p><strong>Trinité :</strong> 92.3 / 94.9 MHz</p>
+                    <p><strong>Saint-Pierre :</strong> 93.5 / 97.4 MHz</p>
+                    <p><strong>Morne-Rouge :</strong> 94.5 MHz</p>
+                </div>
+            </details>
+
+            <details>
+                <summary>📻 RCI Martinique</summary>
+                <div class="media-grid">
+                    <p><strong>Fort-de-France / Centre :</strong> 91.2 MHz</p>
+                    <p><strong>Sud (Rivière-Pilote) :</strong> 98.0 MHz</p>
+                    <p><strong>Nord Caraïbe :</strong> 100.6 MHz</p>
+                    <p><strong>Nord Atlantique :</strong> 103.0 MHz</p>
+                    <p><strong>Trinité :</strong> 91.2 MHz</p>
+                </div>
+            </details>
+
+            <details>
+                <summary>📻 Îles du Nord (Relais)</summary>
+                <div class="media-grid">
+                    <p><strong>St-Martin (Guadeloupe 1ère) :</strong> 91.1 MHz</p>
+                    <p><strong>St-Barth (Guadeloupe 1ère) :</strong> 88.6 MHz</p>
+                    <p><strong>RCI St-Martin :</strong> 98.8 MHz</p>
+                </div>
+            </details>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+
+    <footer>
+        <p>Version 1.0 - &copy; H. GATIBELZA - <a href="https://www.hgati.com" target="_blank">www.hgati.com</a></p>
+    </footer>
+
+</body>
+</html>
