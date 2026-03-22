@@ -1,0 +1,99 @@
+:root {
+    --primary: #2c3e50;
+    --danger: #e74c3c;
+    --safe: #27ae60;
+    --accent: #f39c12;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    background: #f4f7f6;
+    color: #333;
+    padding-bottom: 50px;
+}
+
+header {
+    background: var(--primary);
+    color: white;
+    padding: 1rem;
+    text-align: center;
+}
+
+nav {
+    display: flex;
+    overflow-x: auto;
+    background: white;
+    sticky: top;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+nav button {
+    flex: 1;
+    padding: 15px;
+    border: none;
+    background: none;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+section { display: none; padding: 20px; animation: fadeIn 0.3s; }
+section.active { display: block; }
+
+details {
+    background: white;
+    margin-bottom: 10px;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.btn-sos {
+    background: var(--danger);
+    color: white;
+    width: 100%;
+    padding: 20px;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border: none;
+    margin-top: 20px;
+}
+
+.btn-add { background: var(--safe); color: white; border: none; padding: 10px; border-radius: 5px; }
+
+.link-box {
+    display: block;
+    background: white;
+    padding: 15px;
+    margin: 10px 0;
+    text-decoration: none;
+    color: var(--primary);
+    border-left: 5px solid var(--accent);
+    border-radius: 4px;
+}
+
+footer {
+    text-align: center;
+    padding: 20px 10px;
+    margin-top: 30px;
+    border-top: 1px solid #ddd; /* Une ligne fine pour séparer du contenu */
+}
+
+footer p {
+    font-size: 0.75rem; /* Petit caractère */
+    color: #7f8c8d; /* Gris discret */
+    margin: 0;
+}
+
+footer a {
+    color: #7f8c8d;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+footer a:hover {
+    color: var(--primary); /* Devient bleu au survol */
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
