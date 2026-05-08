@@ -219,13 +219,71 @@
 
     <script src="script.js"></script>
 
-    <footer>
+  <footer>
+        <div class="footer-actions" style="display: flex; justify-content: space-around; padding: 10px 0; border-bottom: 1px solid #ddd; margin-bottom: 10px;">
+            <button id="installBtn" onclick="handleInstall()" style="padding: 8px; font-size: 0.8em; cursor: pointer;">📲 Installation</button>
+            <button onclick="handleRecommend()" style="padding: 8px; font-size: 0.8em; cursor: pointer;">✉️ Recommander</button>
+            <button onclick="handleUpdate()" style="padding: 8px; font-size: 0.8em; cursor: pointer;">🔄 Mise à jour</button>
+        </div>
+
         <div style="margin-top: 10px; font-size: 0.9em;">
             <a href="PIMS%20Antilles%20-%20Guide%20Utilisateur.pdf" target="_blank" style="color: #3498db; text-decoration: none;">📄 Guide Utilisateur (PDF)</a> | 
             <a href="PIMS%20Antilles%20-%20Fiche%20Mémo.pdf" target="_blank" style="color: #3498db; text-decoration: none;">📝 Fiche Mémo (PDF)</a>
-        <p>Version 1.0 - &copy; H. GATIBELZA - <a href="https://www.hgati.com" target="_blank">www.hgati.com</a></p>
+            <p>Version 1.1 - &copy; H. GATIBELZA - <a href="https://www.hgati.com" target="_blank">www.hgati.com</a></p>
         </div>
     </footer>
+
+<script>
+    // --- Logique d'Installation ---
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        // On peut afficher le bouton ici s'il était caché
+    });
+
+    async function handleInstall() {
+        const userAgent = window.navigator.userAgent.toLowerCase();
+        const isiOS = /iphone|ipad|ipod/.test(userAgent);
+
+        if (isiOS) {
+            alert("Sur iOS : cliquez sur l'icône de partage en bas du navigateur (carré avec flèche) puis sur 'Sur l'écran d'accueil'.");
+        } else if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') deferredPrompt = null;
+        } else {
+            alert("L'installation est gérée par votre navigateur. Si l'option n'apparaît pas, l'application est déjà installée ou votre navigateur ne supporte pas l'installation directe.");
+        }
+    }
+
+    // --- Logique de Recommandation ---
+    function handleRecommend() {
+        const subject = encodeURIComponent("PIMS Antilles : Ton guide de survie");
+        const body = encodeURIComponent("Salut, je te recommande cette application pour rester informé des risques aux Antilles : https://pims-antilles.vercel.app");
+        window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    }
+
+    // --- Logique de Mise à jour (Reset) ---
+    async function handleUpdate() {
+        if (confirm("Voulez-vous forcer la mise à jour ? Cela videra le cache et rechargera l'application.")) {
+            // Nettoyage des caches
+            if ('caches' in window) {
+                const keys = await caches.keys();
+                await Promise.all(keys.map(key => caches.delete(key)));
+            }
+            // Nettoyage des Service Workers
+            if ('serviceWorker' in navigator) {
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                for (let registration of registrations) {
+                    registration.unregister();
+                }
+            }
+            // Rechargement forcé
+            window.location.reload(true);
+        }
+    }
+</script>
 
 </body>
 </html>
