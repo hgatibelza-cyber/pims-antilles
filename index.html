@@ -239,7 +239,6 @@
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        // On peut afficher le bouton ici s'il était caché
     });
 
     async function handleInstall() {
@@ -247,40 +246,40 @@
         const isiOS = /iphone|ipad|ipod/.test(userAgent);
 
         if (isiOS) {
-            alert("Sur iOS : cliquez sur l'icône de partage en bas du navigateur (carré avec flèche) puis sur 'Sur l'écran d'accueil'.");
+            alert("Sur iOS : cliquez sur l'icône de partage...");
         } else if (deferredPrompt) {
             deferredPrompt.prompt();
             const { outcome } = await deferredPrompt.userChoice;
             if (outcome === 'accepted') deferredPrompt = null;
         } else {
-            alert("L'installation est gérée par votre navigateur. Si l'option n'apparaît pas, l'application est déjà installée ou votre navigateur ne supporte pas l'installation directe.");
+            alert("L'installation est gérée par votre navigateur.");
         }
     }
 
     // --- Logique de Recommandation ---
     function handleRecommend() {
         const subject = encodeURIComponent("PIMS Antilles : Ton guide de survie");
-        const body = encodeURIComponent("Salut, je te recommande cette application pour rester informé des risques aux Antilles : https://pims-antilles.vercel.app");
+        const body = encodeURIComponent("Salut, je te recommande cette application...");
         window.location.href = `mailto:?subject=${subject}&body=${body}`;
     }
 
-    // --- Logique de Mise à jour (Reset) ---
+    // --- Logique de Mise à jour (UNIQUE ET CORRIGÉE) ---
     async function handleUpdate() {
-        if (confirm("Voulez-vous forcer la mise à jour ? Cela videra le cache et rechargera l'application.")) {
-            // Nettoyage des caches
+        if (confirm("Voulez-vous forcer la mise à jour ?")) {
+            // Nettoyage Cache API
             if ('caches' in window) {
                 const keys = await caches.keys();
                 await Promise.all(keys.map(key => caches.delete(key)));
             }
-            // Nettoyage des Service Workers
+            // Désenregistrement Service Worker
             if ('serviceWorker' in navigator) {
                 const registrations = await navigator.serviceWorker.getRegistrations();
                 for (let registration of registrations) {
-                    registration.unregister();
+                    await registration.unregister();
                 }
             }
-            // Rechargement forcé
-            window.location.reload(true);
+            // Rechargement avec Cache Buster
+            window.location.href = window.location.pathname + "?v=" + Date.now();
         }
     }
 </script>
