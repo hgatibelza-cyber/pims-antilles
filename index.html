@@ -234,28 +234,44 @@
     </footer>
 
 <script>
-    // --- Logique d'Installation ---
-    let deferredPrompt;
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-    });
+// --- Logique d'Installation ---
 
-    async function handleInstall() {
-        const userAgent = window.navigator.userAgent.toLowerCase();
-        const isiOS = /iphone|ipad|ipod/.test(userAgent);
+let deferredPrompt; // Stocke l'événement pour Android
 
-        if (isiOS) {
-            alert("Sur iOS : cliquez sur l'icône de partage...");
-        } else if (deferredPrompt) {
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') deferredPrompt = null;
-        } else {
-            alert("L'installation est gérée par votre navigateur.");
+// Cet événement ne s'active QUE sur Android/Chrome quand le site est installable
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault(); // Empêche l'affichage automatique
+    deferredPrompt = e; // On garde l'événement sous le coude
+    console.log("PWA prête à être installée sur Android");
+});
+
+async function handleInstall() {
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    const isiOS = /iphone|ipad|ipod/.test(userAgent);
+
+    // 1. CAS iOS (Apple)
+    if (isiOS) {
+        alert("Installation sur iPhone/iPad :\n\n1. Cliquez sur l'icône de partage (le carré avec une flèche en bas).\n2. Faites défiler et cliquez sur 'Sur l'écran d'accueil'.");
+    } 
+    
+    // 2. CAS ANDROID (Et Chrome sur PC)
+    else if (deferredPrompt) {
+        // Affiche la bannière officielle Android
+        deferredPrompt.prompt();
+        
+        // Attend la réponse de l'utilisateur
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+            console.log('L\'utilisateur a installé l\'application');
+            deferredPrompt = null; // On vide la variable après installation
         }
+    } 
+    
+    // 3. CAS OÙ L'APP EST DÉJÀ INSTALLÉE OU NAVIGATEUR NON COMPATIBLE
+    else {
+        alert("L'option d'installation n'est pas disponible. Vérifiez si l'application n'est pas déjà sur votre écran d'accueil ou utilisez Chrome sur Android.");
     }
-
+}
     // --- Logique de Recommandation ---
     function handleRecommend() {
         const subject = encodeURIComponent("PIMS Antilles : Ton guide de survie");
