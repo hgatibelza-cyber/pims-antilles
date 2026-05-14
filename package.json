@@ -1,0 +1,27 @@
+{
+  "name": "primary",
+  "version": "1.0.0",
+  "description": "PIMS Antilles est une **Progressive Web App (PWA)** légère et sécurisée, conçue pour la navigation et la sécurité en mer dans la zone Antilles. Elle permet de consulter sa position GPS en temps réel et de la transmettre rapidement par SMS, même avec une connexion internet limitée.",
+  "main": "script.js",
+  "scripts": {
+    "build:analytics": "esbuild analytics.js --bundle --outfile=analytics-bundle.js --format=iife --minify",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hgatibelza-cyber/pims-antilles.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hgatibelza-cyber/pims-antilles/issues"
+  },
+  "homepage": "https://github.com/hgatibelza-cyber/pims-antilles#readme",
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.0"
+  }
+}
