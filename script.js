@@ -6,20 +6,48 @@ function showSection(id) {
 
 // Gestion des contacts (LocalStorage pour le mode Hors-ligne)
 function addContact() {
-    const name = document.getElementById('contactName').value;
-    const phone = document.getElementById('contactPhone').value;
+    const nameInput = document.getElementById('contactName');
+    const phoneInput = document.getElementById('contactPhone');
+    const name = nameInput.value;
+    const phone = phoneInput.value;
+
     if(name && phone) {
         let contacts = JSON.parse(localStorage.getItem('pims_contacts') || '[]');
         contacts.push({name, phone});
         localStorage.setItem('pims_contacts', JSON.stringify(contacts));
+        
+        // Réinitialisation des champs après ajout
+        nameInput.value = '';
+        phoneInput.value = '';
+        
         renderContacts();
     }
 }
 
+// Rendu de la liste avec bouton de suppression (Corbeille)
 function renderContacts() {
     const list = document.getElementById('contactList');
     const contacts = JSON.parse(localStorage.getItem('pims_contacts') || '[]');
-    list.innerHTML = contacts.map(c => `<p>👤 ${c.name} : <strong>${c.phone}</strong></p>`).join('');
+    
+    // On utilise map avec l'index pour savoir quel élément supprimer
+    list.innerHTML = contacts.map((c, index) => `
+        <div style="display: flex; justify-content: space-between; align-items: center; background: #f4f4f4; padding: 8px; margin-bottom: 5px; border-radius: 4px;">
+            <span>👤 ${c.name} : <strong>${c.phone}</strong></span>
+            <button onclick="deleteContact(${index})" style="background: none; border: none; cursor: pointer; font-size: 1.2rem;">
+                🗑️
+            </button>
+        </div>
+    `).join('');
+}
+
+// Fonction pour supprimer un contact spécifique
+function deleteContact(index) {
+    if (confirm("Supprimer ce contact de votre liste d'urgence ?")) {
+        let contacts = JSON.parse(localStorage.getItem('pims_contacts') || '[]');
+        contacts.splice(index, 1); // Supprime 1 élément à l'indice 'index'
+        localStorage.setItem('pims_contacts', JSON.stringify(contacts));
+        renderContacts(); // Actualise l'affichage
+    }
 }
 
 // Géolocalisation et envoi SMS
@@ -29,7 +57,7 @@ function sendSOS() {
         navigator.geolocation.getCurrentPosition(position => {
             const lat = position.coords.latitude;
             const lon = position.coords.longitude;
-            const msg = `PIMS ANTILLES: Je suis en sécurité. Ma position: https://maps.google.com/?q=${lat},${lon}. Point de regroupement: ${zone}`;
+            const msg = `PIMS ANTILLES: Je suis en sécurité. Ma position: https://www.google.com/maps?q=${lat},${lon}. Point de regroupement: ${zone}`;
             
             // Ouvre l'application SMS par défaut
             window.location.href = `sms:?body=${encodeURIComponent(msg)}`;
