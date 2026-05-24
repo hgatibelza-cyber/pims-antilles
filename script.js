@@ -1,76 +1,122 @@
-// Navigation simple
+// ==========================================
+// 1. NAVIGATION
+// ==========================================
 function showSection(id) {
     document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
+    const targetSection = document.getElementById(id);
+    if (targetSection) targetSection.classList.add('active');
 }
 
-// Gestion des contacts (LocalStorage pour le mode Hors-ligne)
+// ==========================================
+// 2. GESTION DES CONTACTS (LocalStorage)
+// ==========================================
 function addContact() {
     const nameInput = document.getElementById('contactName');
     const phoneInput = document.getElementById('contactPhone');
-    const name = nameInput.value;
-    const phone = phoneInput.value;
+    const name = nameInput.value.trim();
+    const phone = phoneInput.value.trim();
 
-    if(name && phone) {
-        let contacts = JSON.parse(localStorage.getItem('pims_contacts') || '[]');
-        contacts.push({name, phone});
-        localStorage.setItem('pims_contacts', JSON.stringify(contacts));
-        
-        // Réinitialisation des champs après ajout
-        nameInput.value = '';
-        phoneInput.value = '';
-        
-        renderContacts();
+    if (!name || !phone) {
+        alert("Veuillez saisir un nom et un numéro valides.");
+        return;
     }
+
+    let contacts = JSON.parse(localStorage.getItem('pims_contacts') || '[]');
+    contacts.push({ name, phone });
+    localStorage.setItem('pims_contacts', JSON.stringify(contacts));
+    
+    nameInput.value = '';
+    phoneInput.value = '';
+    
+    renderContacts();
 }
 
-// Rendu de la liste avec bouton de suppression (Corbeille)
 function renderContacts() {
     const list = document.getElementById('contactList');
+    if (!list) return;
+    
     const contacts = JSON.parse(localStorage.getItem('pims_contacts') || '[]');
     
-    // On utilise map avec l'index pour savoir quel élément supprimer
+    if (contacts.length === 0) {
+        list.innerHTML = `<p style="font-size:0.9em; color:#7f8c8d; italic">Aucun contact enregistré.</p>`;
+        return;
+    }
+
     list.innerHTML = contacts.map((c, index) => `
         <div style="display: flex; justify-content: space-between; align-items: center; background: #f4f4f4; padding: 8px; margin-bottom: 5px; border-radius: 4px;">
-            <span>👤 ${c.name} : <strong>${c.phone}</strong></span>
-            <button onclick="deleteContact(${index})" style="background: none; border: none; cursor: pointer; font-size: 1.2rem;">
+            <span style="color: #333;">👤 ${c.name} : <a href="tel:${c.phone}" style="color:#2980b9; font-weight:bold; text-decoration:none;">${c.phone}</a></span>
+            <button onclick="deleteContact(${index})" style="background: none; border: none; cursor: pointer; font-size: 1.2rem;" aria-label="Supprimer">
                 🗑️
             </button>
         </div>
     `).join('');
 }
 
-// Fonction pour supprimer un contact spécifique
 function deleteContact(index) {
     if (confirm("Supprimer ce contact de votre liste d'urgence ?")) {
         let contacts = JSON.parse(localStorage.getItem('pims_contacts') || '[]');
-        contacts.splice(index, 1); // Supprime 1 élément à l'indice 'index'
+        contacts.splice(index, 1);
         localStorage.setItem('pims_contacts', JSON.stringify(contacts));
-        renderContacts(); // Actualise l'affichage
+        renderContacts();
     }
 }
 
-// Géolocalisation et envoi SMS
+// ==========================================
+// 3. GÉOLOCALISATION & ALERTE SMS
+// ==========================================
 function sendSOS() {
-    const zone = document.getElementById('zoneRegroup').value;
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(position => {
+    const zone = document.getElementById('zoneRegroup').value.trim() || "Non spécifié";
+    const sosBtn = document.querySelector('.btn-sos');
+    const originalText = sosBtn ? sosBtn.innerText : "SIGNALER MA POSITION (SMS)";
+
+    if (!navigator.geolocation) {
+        alert("La géolocalisation n'est pas supportée par votre navigateur.");
+        return;
+    }
+
+    // Feedback visuel pendant la recherche du signal GNSS
+    if (sosBtn) {
+        sosBtn.innerText = "⏳ RECHERCHE GPS EN COURS...";
+        sosBtn.disabled = true;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        position => {
             const lat = position.coords.latitude;
             const lon = position.coords.longitude;
-            const msg = `PIMS ANTILLES: Je suis en sécurité. Ma position: https://www.google.com/maps?q=${lat},${lon}. Point de regroupement: ${zone}`;
             
-            // Ouvre l'application SMS par défaut
+            // Correction de la syntaxe de l'URL Google Maps
+            const msg = `PIMS ANTILLES - URGENCE : Je suis sain et sauf. Ma position : https://www.google.com/maps?q=${lat},${lon} (Point de RDV : ${zone})`;
+            
+            // Restauration du bouton
+            if (sosBtn) {
+                sosBtn.innerText = originalText;
+                sosBtn.disabled = false;
+            }
+
+            // Ouverture de l'app SMS
             window.location.href = `sms:?body=${encodeURIComponent(msg)}`;
-        }, () => {
-            alert("Localisation impossible. Vérifiez vos paramètres GNSS.");
-        });
-    }
+        },
+        error => {
+            if (sosBtn) {
+                sosBtn.innerText = originalText;
+                sosBtn.disabled = false;
+            }
+            alert("Localisation impossible. Vérifiez que votre GPS (GNSS) est activé et que l'application a l'autorisation d'y accéder.");
+        },
+        { enableHighAccuracy: true, timeout: 10000 } // Force la haute précision
+    );
 }
 
-// Initialisation au chargement
-window.onload = renderContacts;
+// ==========================================
+// 4. INITIALISATION & SERVICE WORKER
+// ==========================================
+document.addEventListener('DOMContentLoaded', renderContacts);
 
-// Enregistrement du Service Worker pour le offline
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js');
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then(reg => console.log('Service Worker enregistré !', reg.scope))
+            .catch(err => console.log('Échec enregistrement SW :', err));
+    });
 }
