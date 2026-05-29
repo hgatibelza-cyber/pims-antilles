@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pims-antilles-v1.3.1';
+const CACHE_NAME = 'pims-antilles-v1.3.2';
 
 // Liste complète des fichiers indispensables au fonctionnement 100% hors-ligne
 const ASSETS = [
