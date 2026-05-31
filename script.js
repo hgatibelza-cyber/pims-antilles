@@ -62,7 +62,31 @@ function deleteContact(index) {
 }
 
 // ==========================================
-// 3. GÉOLOCALISATION & ALERTE SMS
+// 3. GESTION DE LA CHECK-LIST (Kit de Survie)
+// ==========================================
+function initChecklist() {
+    // Sélectionne toutes les cases à cocher de la section préparation
+    const checkboxes = document.querySelectorAll('#preparation .checklist input[type="checkbox"]');
+    
+    checkboxes.forEach((checkbox, index) => {
+        // Comme index.html n'a pas d'ID sur les cases, on en crée un unique basé sur l'ordre (ex: kit_item_0)
+        const storageKey = `kit_item_${index}`;
+        
+        // Au chargement : on applique l'état sauvegardé
+        const savedState = localStorage.getItem(storageKey);
+        if (savedState === "true") {
+            checkbox.checked = true;
+        }
+        
+        // Au clic : on sauvegarde immédiatement le changement (coché / décoché)
+        checkbox.addEventListener('change', (e) => {
+            localStorage.setItem(storageKey, e.target.checked);
+        });
+    });
+}
+
+// ==========================================
+// 4. GÉOLOCALISATION & ALERTE SMS
 // ==========================================
 function sendSOS() {
     const zone = document.getElementById('zoneRegroup').value.trim() || "Non spécifié";
@@ -74,7 +98,6 @@ function sendSOS() {
         return;
     }
 
-    // Feedback visuel pendant la recherche du signal GNSS
     if (sosBtn) {
         sosBtn.innerText = "⏳ RECHERCHE GPS EN COURS...";
         sosBtn.disabled = true;
@@ -85,16 +108,13 @@ function sendSOS() {
             const lat = position.coords.latitude;
             const lon = position.coords.longitude;
             
-            // Correction de la syntaxe de l'URL Google Maps
             const msg = `PIMS ANTILLES - URGENCE : Je suis sain et sauf. Ma position : https://www.google.com/maps?q=${lat},${lon} (Point de RDV : ${zone})`;
             
-            // Restauration du bouton
             if (sosBtn) {
                 sosBtn.innerText = originalText;
                 sosBtn.disabled = false;
             }
 
-            // Ouverture de l'app SMS
             window.location.href = `sms:?body=${encodeURIComponent(msg)}`;
         },
         error => {
@@ -104,14 +124,17 @@ function sendSOS() {
             }
             alert("Localisation impossible. Vérifiez que votre GPS (GNSS) est activé et que l'application a l'autorisation d'y accéder.");
         },
-        { enableHighAccuracy: true, timeout: 10000 } // Force la haute précision
+        { enableHighAccuracy: true, timeout: 10000 }
     );
 }
 
 // ==========================================
-// 4. INITIALISATION & SERVICE WORKER
+// 5. INITIALISATION & SERVICE WORKER
 // ==========================================
-document.addEventListener('DOMContentLoaded', renderContacts);
+document.addEventListener('DOMContentLoaded', () => {
+    renderContacts();
+    initChecklist(); // Lance la mémorisation du kit de survie
+});
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {

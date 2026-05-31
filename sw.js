@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pims-antilles-v1.3.2';
+const CACHE_NAME = 'pims-antilles-v1.3.3'; // Pense à changer cette version à chaque mise à jour !
 
 // Liste complète des fichiers indispensables au fonctionnement 100% hors-ligne
 const ASSETS = [
@@ -12,7 +12,7 @@ const ASSETS = [
     './PIMS%20Antilles%20-%20Fiche%20Mémo.pdf'
 ];
 
-// 1. INSTALLATION : Mise en cache de toutes les ressources indispensables
+// 1. INSTALLATION : Mise en cache des ressources d'urgence
 self.addEventListener('install', e => {
     e.waitUntil(
         caches.open(CACHE_NAME)
@@ -20,7 +20,7 @@ self.addEventListener('install', e => {
                 console.log('Pré-mise en cache des ressources d\'urgence réussie.');
                 return cache.addAll(ASSETS);
             })
-            .then(() => self.skipWaiting()) // Force le SW à s'activer immédiatement sans attendre la fermeture des onglets
+            // Suppression de self.skipWaiting() ici pour permettre la détection de la mise à jour par l'infobulle
     );
 });
 
@@ -42,22 +42,26 @@ self.addEventListener('activate', e => {
 
 // 3. INTERCEPTION DES REQUÊTES : Mode hors-ligne prioritaire (Cache-First)
 self.addEventListener('fetch', e => {
-    // Optionnel : Ne pas intercepter les requêtes de tracking Vercel ou externes
     if (!e.request.url.startsWith(self.location.origin)) {
         return; 
     }
 
     e.respondWith(
         caches.match(e.request).then(cachedResponse => {
-            // Si le fichier est dans le cache, on le retourne instantanément (idéal hors-ligne)
             if (cachedResponse) {
                 return cachedResponse;
             }
-            // Sinon, on va le chercher sur le réseau
             return fetch(e.request).catch(() => {
-                // Si le réseau échoue et que c'est une page HTML demandée, on peut gérer
                 console.log('Ressource indisponible hors-ligne :', e.request.url);
             });
         })
     );
+});
+
+// 4. ÉCOUTE DU SIGNAL DE MISE À JOUR FORCEE
+// Reçoit le message envoyé en arrière-plan lorsque l'utilisateur valide
+self.addEventListener('message', e => {
+    if (e.data && e.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
 });

@@ -144,13 +144,13 @@
         <section id="preparation">
             <h2>Mon Kit de Survie (72h)</h2>
             <div class="checklist">
-                <label><input type="checkbox"> 6L d'eau par personne</label>
-                <label><input type="checkbox"> Rations de survie / Conserves</label>
-                <label><input type="checkbox"> Radio à piles + Talkie-Walkie</label>
-                <label><input type="checkbox"> Lampe torche & Piles</label>
-                <label><input type="checkbox"> Trousse de secours & Médicaments</label>
-                <label><input type="checkbox"> Nécessaire de toilette (lingettes, savon)</label>
-                <label><input type="checkbox"> Petit outillage (couteau suisse, ruban adhésif)</label>
+                <label><input type="checkbox" id="eau"> 6L d'eau par personne</label>
+                <label><input type="checkbox" id="nourriture"> Rations de survie / Conserves</label>
+                <label><input type="checkbox" id="radio"> Radio à piles + Talkie-Walkie</label>
+                <label><input type="checkbox" id="lampe"> Lampe torche & Piles</label>
+                <label><input type="checkbox" id="secours"> Trousse de secours & Médicaments</label>
+                <label><input type="checkbox" id="toilette"> Nécessaire de toilette (lingettes, savon)</label>
+                <label><input type="checkbox" id="outils"> Petit outillage (couteau suisse, ruban adhésif)</label>
             </div>
             
             <hr>
@@ -187,6 +187,35 @@
         </section>
 
         <section id="infos">
+            <h2>Mode d'emploi de l'application</h2>
+
+        <details style="background: #f8f9fa; padding: 10px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #ddd;">
+               <summary style="font-weight: bold; cursor: pointer; color: #2c3e50;">📖 Lire le Guide Utilisateur sommaire</summary>
+        <div style="margin-top: 10px; font-size: 0.95em; line-height: 1.5; color: #333;">
+        
+        <p><strong>1. Configuration Prioritaire (Avant la crise) :</strong><br>
+        • <strong>Annuaire de Crise :</strong> Allez dans l'onglet <em>Urgence</em> pour ajouter vos proches et définir votre Zone de regroupement.<br>
+        • <strong>Confidentialité :</strong> Toutes ces données restent localement dans votre téléphone. Aucune information n'est envoyée vers des serveurs tiers.</p>
+
+        <p><strong>2. Modules de Prévention (Savoir quoi faire) :</strong><br>
+        • <strong>Ouragans :</strong> Suivez les consignes par couleur (Jaune à Violet).<br>
+        • <strong>Tsunami :</strong> En cas de séisme ressenti ou si la mer se retire, fuyez vers les hauteurs via les Itinéraires EXPLOIT.<br>
+        • <strong>Volcan :</strong> Instructions sur le port du masque et la protection des citernes.<br>
+        • <strong>Sargasses :</strong> Suivez le code couleur (Bleu à Rouge) pour connaître les seuils de toxicité.</p>
+
+        <p><strong>3. Préparation et Secours :</strong><br>
+        • <strong>Checklist :</strong> Cochez vos éléments essentiels (eau, rations, radio à piles) pour tenir 72h.<br>
+        • <strong>Premiers Secours :</strong> Fiches mémo rapides en cas d'urgence.</p>
+
+        <p><strong>4. Urgence et Regroupement :</strong><br>
+        • Le bouton <strong>"SIGNALER MA POSITION"</strong> génère un SMS automatique incluant vos coordonnées GPS et votre point de rendez-vous familial (pensez à activer le GPS de votre téléphone).</p>
+
+        <p><strong>5. Conseils de Survie Numérique :</strong><br>
+        • <strong>Économie d'énergie :</strong> Ne laissez pas l'application ouverte inutilement pour préserver votre batterie.<br>
+        • <strong>Mise à jour :</strong> Utilisez le bouton "Mise à jour" en bas de page pour forcer le rafraîchissement si besoin.</p>
+    </div>
+</details>
+
             <h2>Météo Officielle</h2>
             <a href="http://www.meteofrance.gp" target="_blank" class="link-box">Météo France Guadeloupe, St-Barthélemy & St-Martin</a>
             <a href="http://www.meteofrance.mq" target="_blank" class="link-box">Météo France Martinique</a>
@@ -274,9 +303,9 @@
         </div>
 
         <div style="margin-top: 10px; font-size: 0.9em;">
-            <a href="PIMS%20Antilles%20-%20Guide%20Utilisateur.pdf" target="_blank" style="color: #3498db; text-decoration: none;">📄 Guide Utilisateur (PDF)</a> | 
+            <a href="PIMS%20Antilles%20-%20Guide%20Utilisateur.pdf" download="PIMS_Antilles_Guide_Utilisateur.pdf" style="color: #3498db; text-decoration: none;">📄 Guide Utilisateur (PDF)</a> | 
             <a href="PIMS%20Antilles%20-%20Fiche%20Mémo.pdf" target="_blank" style="color: #3498db; text-decoration: none;">📝 Fiche Mémo (PDF)</a>
-            <p>Version 1.3.2 - &copy; H. GATIBELZA - <a href="https://www.hgati.com" target="_blank">www.hgati.com</a></p>
+            <p>Version 1.3.3 - &copy; H. GATIBELZA - <a href="https://www.hgati.com" target="_blank">www.hgati.com</a></p>
         </div>
     </footer>
 
@@ -327,27 +356,43 @@ async function handleInstall() {
     }
 
     // --- Logique de Mise à jour (UNIQUE ET CORRIGÉE) ---
-    async function handleUpdate() {
-        if (confirm("Voulez-vous forcer la mise à jour ?")) {
-            // Nettoyage Cache API
-            if ('caches' in window) {
-                const keys = await caches.keys();
-                await Promise.all(keys.map(key => caches.delete(key)));
-            }
-            // Désenregistrement Service Worker
-            if ('serviceWorker' in navigator) {
-                const registrations = await navigator.serviceWorker.getRegistrations();
-                for (let registration of registrations) {
-                    await registration.unregister();
-                }
-            }
-            // Rechargement avec Cache Buster
-            window.location.href = window.location.pathname + "?v=" + Date.now();
+async function handleUpdate() {
+    if (confirm("Voulez-vous forcer la mise à jour ?")) {
+        // Envoie le signal au Service Worker pour qu'il s'active enfin
+        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
         }
+
+        // Nettoyage Cache API
+        if ('caches' in window) {
+            const keys = await caches.keys();
+            await Promise.all(keys.map(key => caches.delete(key)));
+        }
+        // Désenregistrement Service Worker
+        if ('serviceWorker' in navigator) {
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            for (let registration of registrations) {
+                await registration.unregister();
+            }
+        }
+        // Rechargement avec Cache Buster
+        window.location.href = window.location.pathname + "?v=" + Date.now();
     }
+}
+
 </script>
 
     <script defer src="/_vercel/insights/script.js"></script>
+
+<!-- Infobulle de notification de mise à jour -->
+<div id="update-banner" style="display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #2c3e50; color: white; padding: 14px 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 10000; text-align: center; font-family: sans-serif; max-width: 85%; width: 320px; line-height: 1.4; border-left: 4px solid #3498db;">
+    <div style="font-weight: bold; margin-bottom: 5px;">📢 Mise à jour disponible</div>
+    <div style="font-size: 0.9em; color: #ecf0f1; margin-bottom: 10px;">Une nouvelle version est en ligne, cliquez sur "Mise à jour".</div>
+    <div style="display: flex; justify-content: space-around; gap: 10px;">
+        <button onclick="handleUpdate()" style="background: #3498db; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85em; font-weight: bold;">Mise à jour</button>
+        <button onclick="document.getElementById('update-banner').style.display='none'" style="background: transparent; color: #bdc3c7; border: 1px solid #7f8c8d; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85em;">Plus tard</button>
+    </div>
+</div>
 
 </body>
 </html>
