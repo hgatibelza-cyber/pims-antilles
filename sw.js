@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pims-antilles-v1.3.3'; // Pense à changer cette version à chaque mise à jour !
+const CACHE_NAME = 'pims-antilles-v1.3.4'; // Pense à changer cette version à chaque mise à jour !
 
 // Liste complète des fichiers indispensables au fonctionnement 100% hors-ligne
 const ASSETS = [

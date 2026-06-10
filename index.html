@@ -26,7 +26,7 @@
             <h2>Risques Naturels & Technologiques Majeurs</h2>
             
             <details>
-                <summary>🌀 Ouragan (Phases d'alerte)</summary>
+                <summary>🌀 Phénomène cyclonique (Phases d'alerte)</summary>
                 <div style="margin-top: 10px;">
                     <div style="background-color: white; color: black; padding: 10px; margin-bottom: 5px; border-radius: 4px; border: 4px solid #f1c40f;">
                         <strong>Jaune :</strong> Soyez attentif, vérifiez vos kits et l'évolution météo.
@@ -142,19 +142,53 @@
         </section>
 
         <section id="preparation">
-            <h2>Mon Kit de Survie (72h)</h2>
-            <div class="checklist">
-                <label><input type="checkbox" id="eau"> 6L d'eau par personne</label>
-                <label><input type="checkbox" id="nourriture"> Rations de survie / Conserves</label>
-                <label><input type="checkbox" id="radio"> Radio à piles + Talkie-Walkie</label>
-                <label><input type="checkbox" id="lampe"> Lampe torche & Piles</label>
-                <label><input type="checkbox" id="secours"> Trousse de secours & Médicaments</label>
-                <label><input type="checkbox" id="toilette"> Nécessaire de toilette (lingettes, savon)</label>
-                <label><input type="checkbox" id="outils"> Petit outillage (couteau suisse, ruban adhésif)</label>
-            </div>
+            <p class="consigne">Préparez votre kit d'urgence dès maintenant et pensez à vérifier son contenu régulièrement. Placez le sac dans un endroit facile d’accès.</p>
+
+<h2>Mon Kit de Survie (72h)</h2>
+<div class="checklist">
+    <label><input type="checkbox" id="eau"> De l’eau potable en quantité (6L par personne)</label>
+    <label><input type="checkbox" id="nourriture"> Nourriture non périssable sans cuisson (conserves, barres, nourriture bébé/animaux…)</label>
+    
+    <label><input type="checkbox" id="radio"> Radio à piles (avec piles de rechange) + Talkie-Walkie</label>
+    <label><input type="checkbox" id="lampe"> Lampe de poche (+ piles), bougies, briquet ou allumettes</label>
+    <label><input type="checkbox" id="chargeur"> Chargeur de téléphone portable</label>
+    
+    <label><input type="checkbox" id="secours"> Trousse de premiers secours (alcool, pansements, compresses…)</label>
+    <label><input type="checkbox" id="medicaments"> Médicaments de base et traitements médicaux en cours</label>
+    <label><input type="checkbox" id="lunettes"> Paire de lunettes de vue de secours</label>
+    <label><input type="checkbox" id="toilette"> Nécessaire de toilette (lingettes, savon, hygiène intime…)</label>
+    
+    <label><input type="checkbox" id="vetements"> Vêtements chauds et couverture de survie</label>
+    <label><input type="checkbox" id="outils"> Couteau multifonctions / suisse, ouvre-boîte, ruban adhésif</label>
+    
+    <label><input type="checkbox" id="papiers"> Photocopies des documents essentiels dans une pochette étanche (pièces d'identité, ordonnances…)</label>
+    <label><input type="checkbox" id="cles"> Double des clés (maison et voiture)</label>
+    <label><input type="checkbox" id="argent"> Argent liquide (en cas de panne des distributeurs)</label>
+    
+    <label><input type="checkbox" id="jeux"> Jeux pour occuper le temps (cartes, dés, livres…)</label>
+</div>
+
+<p class="rappel"><em>⚠️ Pensez à vérifier le contenu une fois par an (piles, dates de péremption des aliments/médicaments). En cas d’utilisation, n’oubliez pas de réapprovisionner le kit !</em></p>
+
+<script>
+    // Étape 1 : Au chargement de la page, on va chercher l'état sauvegardé dans le navigateur
+    document.querySelectorAll('.checklist input[type="checkbox"]').forEach(checkbox => {
+        const estadoSauvegarde = localStorage.getItem(checkbox.id);
+        
+        // Si la case était cochée avant de rafraîchir, on la recoche
+        if (estadoSauvegarde === 'true') {
+            checkbox.checked = true;
+        }
+
+        // Étape 2 : À chaque fois que l'utilisateur clique sur une case, on enregistre son nouvel état
+        checkbox.addEventListener('change', () => {
+            localStorage.setItem(checkbox.id, checkbox.checked);
+        });
+    });
+</script>
             
             <hr>
-            <h2>Premiers Secours</h2>
+            <h2>Gestes qui sauvent (GQS)</h2>
             <div class="aid-box">
                 <p><strong>Inconscience :</strong> Placer en Position Latérale de Sécurité (PLS).</p>
                 <p><strong>Hémorragie :</strong> Comprimer la plaie avec un linge propre.</p>
@@ -171,6 +205,7 @@
                 <p>🚒 <strong><a href="tel:18" class="phone-link">18</a></strong> : Pompiers</p>
                 <p>🇪🇺 <strong><a href="tel:112" class="phone-link">112</a></strong> : Appel d'urgence européen</p>
                 <p>🤟 <strong><a href="sms:114" class="phone-link">114</a></strong> : Urgence Sourds / Malentendants (SMS)</p>
+                <p>🛟 <strong><a href="tel:196" class="phone-link">196</a></strong> et canal 16 : Secours maritimes</p>
             </div>
 
             <hr>
